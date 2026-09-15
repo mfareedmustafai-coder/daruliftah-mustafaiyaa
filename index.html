@@ -9,6 +9,9 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 
+    <!-- EmailJS SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+
     <!-- فتویٰ بنانے والی لائبریریاں -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -35,7 +38,6 @@
             color:var(--text);
             min-height:100vh;
         }
-        /* پرانا نوٹ: top-header اور main-header کے نام وہی، بس رنگ نئے تھیم کے */
         .top-header{
             background:var(--paper);
             text-align:center;
@@ -155,7 +157,6 @@
             transform:translateY(-2px);
         }
 
-        /* Modal */
         .modal-overlay{
             display:none;
             position:fixed;top:0;left:0;width:100%;height:100%;
@@ -175,9 +176,6 @@
         }
         .modal-box h3{ color:var(--green-2); margin-top:0; }
 
-        /* ============================================================
-           نیا سیکشن: فتویٰ بنائیں
-           ============================================================ */
         .fatwa-form-box{
             background:var(--paper);
             border:1px solid var(--line);
@@ -248,7 +246,6 @@
         }
         #fPreviewBox{ display:flex; justify-content:center; overflow-x:auto; padding:6px 0; }
 
-        /* لوڈنگ */
         #f-loading{
             position:fixed;inset:0;background:rgba(6,20,12,.75);z-index:2000;
             display:none;align-items:center;justify-content:center;flex-direction:column;gap:20px;
@@ -261,7 +258,6 @@
         }
         @keyframes fspin{ to{ transform:rotate(360deg);} }
 
-        /* ٹوسٹ */
         #f-toast{
             position:fixed;left:50%;bottom:30px;
             transform:translateX(-50%) translateY(20px);
@@ -275,9 +271,6 @@
         }
         #f-toast.on{ opacity:1; transform:translateX(-50%) translateY(0); }
 
-        /* ============================================================
-           فتویٰ کا فارمیٹ (ڈاؤن لوڈ کے لیے)
-           ============================================================ */
         #fatwa{
             width:800px;
             background:#fff;
@@ -329,7 +322,6 @@
         .f-footer-col{ flex:1; min-width:150px; }
         .f-footer-col span{ font-size:12px; font-weight:600; }
 
-        /* --- Mobile Responsiveness --- */
         @media (max-width: 768px) {
             .nav-bar{ flex-wrap:wrap; gap:10px; }
             .nav-bar button, .nav-bar a{ font-size:1em; padding:5px 10px; }
@@ -367,7 +359,6 @@
         <a href="admin.html" style="color:#666; font-size:0.9em; margin-right:auto;">ایڈمن پینل</a>
     </div>
 
-    <!-- Home Section (Form) -->
     <div class="container" id="user-home-section">
         <h2 class="section-title">دارالافتاء اہلسنت سے سوال پوچھیں</h2>
         <p class="description">جدید وقدیم، روزمرہ معاملات زندگی کے بارے فقہی مسائل سے متعلق بے شمار فتاوی اور آپ کے شرعی مسائل کے جوابات ۔ بذریعہ ای میل سوالات پوچھنے اور دارالافتاء اہلسنت کے مفتی صاحب سے جواب حاصل کیجئے۔</p>
@@ -397,14 +388,10 @@
         </form>
     </div>
 
-    <!-- Fatawa Section -->
     <div class="container" id="user-fatawa-section" style="display:none; padding:0; height:80vh; min-height:600px; overflow:hidden;">
         <iframe src="https://www.fatwaqa.com/ur" style="width:100%; height:100%; border:none;"></iframe>
     </div>
 
-    <!-- ============================================================
-         نیا سیکشن: فتویٰ بنائیں
-         ============================================================ -->
     <div class="container" id="user-fatwa-banao-section" style="display:none;">
         <h2 class="section-title">فتویٰ بنائیں</h2>
         <p class="description" style="text-align:center;">سوال اور جواب لکھیں — باقی فارمیٹ خود بن جائے گا</p>
@@ -445,7 +432,6 @@
         </div>
     </div>
 
-    <!-- More Info Section -->
     <div class="container" id="user-more-section" style="display:none;">
         <h2 class="section-title">دارالافتاء مصطفائیہ</h2>
         <div style="text-align:center; line-height:2.5; font-size:1.2em;">
@@ -455,7 +441,6 @@
         </div>
     </div>
 
-    <!-- Success Modal -->
     <div class="modal-overlay" id="success-modal">
         <div class="modal-box">
             <h3>سوال جمع کروانے کا شکریہ!</h3>
@@ -465,18 +450,16 @@
         </div>
     </div>
 
-    <!-- فتویٰ لوڈنگ -->
     <div id="f-loading">
         <div class="f-spinner"></div>
         <div>بنایا جا رہا ہے ...</div>
     </div>
 
-    <!-- ٹوسٹ -->
     <div id="f-toast"></div>
 
     <script>
         /* ============================================================
-           Firebase (جیسا تھا ویسا ہی)
+           Firebase
            ============================================================ */
         const firebaseConfig = {
             apiKey: "AIzaSyBwb73s0PKMP3uReEmr6cux2Now2i9h4QA",
@@ -489,6 +472,11 @@
         };
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
+
+        /* ============================================================
+           EmailJS Initialize
+           ============================================================ */
+        emailjs.init("EP_szGhOsCeaQ2pdI");
 
         /* ============================================================
            سیکشنز
@@ -541,34 +529,63 @@
         };
 
         /* ============================================================
-           سوال جمع کرانا (Firebase) — جیسا تھا ویسا
+           سوال جمع کرانا + ای میل بھیجنا
            ============================================================ */
         document.getElementById('fatwa-form').onsubmit = (e) => {
             e.preventDefault();
             const randomNum = Math.floor(1000 + Math.random() * 9000);
             const questionId = "WEB-" + randomNum;
 
+            const userEmail = document.getElementById('u-email').value;
+            const userName = document.getElementById('u-name').value;
+            const userSubject = document.getElementById('u-subject').value;
+            const userQuestion = document.getElementById('u-question').value;
+            const userPhone = document.getElementById('u-phone').value;
+
             const data = {
                 qId: questionId,
-                name: document.getElementById('u-name').value,
-                email: document.getElementById('u-email').value,
-                phone: document.getElementById('u-phone').value,
-                subject: document.getElementById('u-subject').value,
-                question: document.getElementById('u-question').value,
+                name: userName,
+                email: userEmail,
+                phone: userPhone,
+                subject: userSubject,
+                question: userQuestion,
                 status: "Pending",
                 answer: "",
                 timestamp: firebase.database.ServerValue.TIMESTAMP
             };
 
+            // 1. Firebase میں ڈیٹا محفوظ کریں
             db.ref('questions').push(data).then(() => {
-                document.getElementById('display-q-id').innerText = questionId;
-                document.getElementById('success-modal').style.display = 'flex';
-                document.getElementById('fatwa-form').reset();
+
+                // 2. ای میل بھیجیں
+                const templateParams = {
+                    to_email: "mfareedmustafai@gmail.com",
+                    name: userName,
+                    email: userEmail,
+                    phone: userPhone,
+                    question_id: questionId,
+                    subject: userSubject,
+                    question: userQuestion
+                };
+
+                emailjs.send("service_ut9icd4", "template_kesjd4o", templateParams)
+                    .then(() => {
+                        document.getElementById('display-q-id').innerText = questionId;
+                        document.getElementById('success-modal').style.display = 'flex';
+                        document.getElementById('fatwa-form').reset();
+                    })
+                    .catch((error) => {
+                        console.error("Email error:", error);
+                        document.getElementById('display-q-id').innerText = questionId;
+                        document.getElementById('success-modal').style.display = 'flex';
+                        document.getElementById('fatwa-form').reset();
+                    });
+
             }).catch(error => alert("ایرر: " + error.message));
         };
 
         /* ============================================================
-           فتویٰ بنانے کا سسٹم (نیا)
+           فتویٰ بنانے کا سسٹم
            ============================================================ */
         function fToast(msg, ms=2200){
             const t = document.getElementById('f-toast');
